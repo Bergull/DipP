@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<head>
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+
+<style>
+    #container{
+        margin : auto;
+        background-color : #eee6ff;
+        width : 80%
+    }
+    .leftfloat{
+        float : left;
+    }
+    .testbgr{
+        background-color : #e6ffff;
+    }
+    .padding20{
+        padding : 20px
+    }
+    #mainimg{
+    }
+    #otherimgcontXXX{
+        display : flex;
+        flex-wrap: wrap;
+    }
+    .indvimgXXX{
+        float : left;
+        margin : 20px;
+    }
+    .imgmin{
+        max-height : 90%;
+        max-width : 90%;
+        height = auto;
+        width = auto;
+        
+    }
+    #rightcol{
+        width : 600px;
+    }
+    #zoomed{
+        max-width : 50%;
+        max-height : 50%;
+        width : auto;
+        height : auto;
+    }
+    .thumbnailcont{
+        overflow:hidden;
+    }
+    .greyedout{
+        opacity: 0.4;
+        filter: alpha(opacity=40); 
+    }
+</style>
+</head>
+
+<html>
+   <body>
+      <nav class="row navbar navbar-light navbar-expand-lg bg-light">
+          <ul class="navbar-nav mr-auto">
+            <li><a href="{{ url_for('createoffer') }}" class="nav-link">Nový inzerát</a></li>
+            <li><a href="{{ url_for('listings') }}" class="nav-link">Dostupné inzeráty</a></li>
+          </ul>
+    </nav>
+   <div id="container" class="row">
+       <div id="left" class="col testbgr padding20">
+          <h1>Detail inzerátu</h1>
+           <p>Prodej/pronájem</p><br>
+           <p> {{ result.name}} </p>
+           <p>Plocha</p><br>
+           <p>Lokace</p><br>
+           <p>Popis</p><br>
+           <p>Cena</p><br>
+           <p>Kontakt</p>
+       </div>
+    
+       <div id="rightcol" class="col padding20">
+           <p> Images in List : {{ result.imageList|length }} </p>
+           <div id="mainimg" class="padding20">
+               <img src="https://upload.wikimedia.org/wikipedia/commons/b/b6/Image_created_with_a_mobile_phone.png" id="zoomed" height=500 widht=500> </img>
+           </div>
+            <div class="row filters">
+                <h3>Filtry</h3>
+                <!--<button id="bedroomFilter" class="filterBtn" data-filterfor="bedroom">Filtr</button>
+                <button class="filterBtn" data-filterfor="kitchen">Filtr Kitchen </button> -->
+            </div>
+           <div id="otherimgcont">
+            {%  for image in result.imageList  %}
+            {% if loop.index0%3 == 0 %} <div class="row text-center"> {%  endif %}
+                <div class="col-md-3 thumbnailcont gridi{{ loop.index0 }}">
+                    <img src="/files/{{ image.imagePath }}" class="imgmin {{ image.cla }} filterOff">
+                </div>
+            {%  if loop.index%3 == 0 or loop.index == loop.length %}</div><!-- row closing --><hr>{%  endif %}
+            {% endfor %}
+           </div>
+       </div>
+       
+   <div>
+   
+   </body>
+   <div id="zoomed"></div>
+</html>
+<script>
+$(document).ready(function() {
+toggleFilterBedroom= false;
+
+$(".imgmin").on("click", function(e){
+    console.log(e);
+    //$("#focused").attr("width", 500);
+    //$("#focused").attr("height", 500);   
+    $("#zoomed").attr("src", e.target.src)    
+});
+//filtr pro highligh obrazku odpovidajici predicted kategorii, kategorii ziskanou z passnutyho objectu ulozit jako tridu pro kazdej img
+//jen pokud trida tam je
+/**
+$("#bedroomFilter").on("click", function(e){
+    if($(".bedroom").length > 0){
+        if(toggleFilterBedroom){
+            $(".imgmin").removeClass("greyedout");
+        }else{
+            console.log("click");
+            $(".imgmin").addClass("greyedout");
+            $(".bedroom").removeClass("greyedout");   
+        }
+        toggleFilterBedroom = !toggleFilterBedroom; 
+    }
+});
+**/
+categories = ["bathroom", "bedroom", "kitchen", "living_room", "plan", "None"];
+categoryMapping = { "bathroom" : "Bathroom",
+    "bedroom" : "Bedroom",
+    "kitchen" : "Kitchen",
+    "living_room" : "Living room",
+    "plan" : "Floor plan"
+}
+
+presentCategories = [];
+$(".imgmin").each(function(i, o){
+  console.log($(this).attr("class"))
+  let category = $(this).attr("class").split(" ")[1];
+  if(!presentCategories.includes(category)){
+      presentCategories.push(category);
+  }
+  
+})
+presentCategories.forEach(function(i){
+    console.log(categoryMapping[i])
+    if(categoryMapping[i]){
+        console.log("filtr for " + i)
+        $(".filters").append($("<button>Filtr " + categoryMapping[i] +"</button>").attr({"class" : "filterBtn", "data-filterfor" : i}))
+    }
+})
+function filterBtnClick(e){
+console.log(e);
+    btn = $(this)
+    filterFor = $(this).attr("data-filterfor");
+    console.log(filterFor)
+    if($("." + filterFor).length > 0){
+        if(btn.hasClass("toggleOn")){
+        //for turning off
+            $(".filterOff").removeClass("greyedout");
+            $("." + filterFor).removeClass("filterOn") 
+            btn.removeClass("toggleOn");
+            //btn.addClass("toggleOff");
+            
+            $(".thumbnailcont").each(function(i){
+                console.log($(this));
+                if($(this).children().length>1){
+                    $(this).children().last().remove()
+                    $(this).children().show()
+                }
+            })
+
+            
+            $(".thumbnailcont").each(function(i){
+                $(this).show();
+            }) 
+            
+            
+        }else{
+            //first clean up?
+            $(".filterOn").removeClass("filterOn");
+            $(".toggleOn").removeClass("toggleOn"); //toggleClass
+             $(".thumbnailcont").each(function(i){
+                console.log($(this));
+                if($(this).children().length>1){
+                    $(this).children().last().remove()
+                    $(this).children().show()
+                }
+            })
+
+            
+            $(".thumbnailcont").each(function(i){
+                $(this).show();
+            }) 
+            
+            
+            console.log("click");
+            $(".filterOff").addClass("greyedout");
+            //$(".imgmin").addClass("greyedout");
+            $("." + filterFor).removeClass("greyedout");
+            $("." + filterFor).addClass("filterOn")  
+            btn.addClass("toggleOn");
+            //btn.removeClass("toggleOff");
+            
+            
+            filterOn = $(".filterOn")
+            list = $(".thumbnailcont")
+            filterOn.each(function(i){
+                console.log(list[i])
+                console.log($(this))
+                $(this).clone().appendTo($(list[i]));
+                $(list[i]).children().first().hide()
+            })
+            
+            $(".thumbnailcont").each(function(i){
+                if($(this).children().length == 1){
+                    $(this).hide();   
+                }
+            });
+            $(".imgmin").on("click", function(e){  
+                $("#zoomed").attr("src", e.target.src)    
+            });
+        }
+    }
+}  
+$(".filterBtn").on("click", filterBtnClick);
+
+//schovat img co tam je, nahradit ho jen obrazkama co chci mit, aby se nezkazilo formatovani.
+filterOn = $(".filterOn")
+list = $(".thumbnailcont")
+filterOn.each(function(i){
+    console.log(list[i])
+    console.log($(this))
+    $(list[i]).children().hide()
+    $(this).clone().appendTo($(list[i]));
+
+    
+})
+$(".thumbnailcont").each(function(i){
+    console.log($(this));
+    if($(this).children().length>1){
+        $(this).children().last().remove()
+        $(this).children().show()
+    }
+})
+
+console.log(presentCategories)
+});  //end document ready   
+</script>
+

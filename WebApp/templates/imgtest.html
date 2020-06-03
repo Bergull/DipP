@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<head>
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+<style>
+    #container{
+        margin : auto;
+        background-color : blue;
+        width : 80%
+    }
+    .leftfloat{
+        float : left;
+    }
+    .testbgr{
+        background-color : purple;
+    }
+    .padding20{
+        padding : 20px
+    }
+    #mainimg{
+    }
+    #otherimgcontXXX{
+        display : flex;
+        flex-wrap: wrap;
+    }
+    .indvimgXXX{
+        float : left;
+        margin : 20px;
+    }
+    #rightcol{
+        width : 600px;
+    }
+</style>
+</head>
+
+<html>
+   <body>
+   <div id="container" class="row">
+       <div id="left" class="col testbgr padding20">
+           <p>   Bleh   Bleh   Bleh   Bleh   Bleh   Bleh</p>
+           <form>
+           <label for="fname">Prodej/pronájem</label><br>
+           <input type="text"/><br>
+           <label for="fname">Plocha</label><br>
+           <input type="text"/><br>
+           <label for="fname">Lokace</label><br>
+           <input type="text"/><br>
+           <label for="fname">Popis</label><br>
+           <input type="text"/><br>
+           <label for="fname">Cena</label><br>
+           <input type="text"/><br>
+           </form>
+       </div>
+    
+       <div id="rightcol" class="col padding20">
+           <p>   Bleh   Bleh   Bleh   Bleh   Bleh   Bleh</p>
+           <div id="mainimg">
+               <img src="https://upload.wikimedia.org/wikipedia/commons/b/b6/Image_created_with_a_mobile_phone.png" id="zoomed" height=500 widht=500> </img>
+           </div>
+           <div id="otherimgcont">
+               <div>
+               <div class="indvimg">
+                   <img src="https://upload.wikimedia.org/wikipedia/commons/b/b6/Image_created_with_a_mobile_phone.png" class="imgmin" height=100 widht=100> </img>
+               </div>
+               <div class="indvimg">
+                   <img src="https://upload.wikimedia.org/wikipedia/commons/b/b6/Image_created_with_a_mobile_phone.png" class="imgmin" height=100 widht=100> </img>
+               </div>
+               <div class="indvimg">
+                   <img src="https://upload.wikimedia.org/wikipedia/commons/b/b6/Image_created_with_a_mobile_phone.png" class="imgmin" height=100 widht=100> </img>
+               </div>
+               <div class="indvimg">
+                   <img src="https://upload.wikimedia.org/wikipedia/commons/b/b6/Image_created_with_a_mobile_phone.png" class="imgmin" height=100 widht=100> </img>
+               </div>
+               <div class="indvimg">
+                   <img src="https://upload.wikimedia.org/wikipedia/commons/b/b6/Image_created_with_a_mobile_phone.png" class="imgmin" height=100 widht=100> </img>
+               </div>
+               <div class="indvimg">
+                   <img src="https://upload.wikimedia.org/wikipedia/commons/b/b6/Image_created_with_a_mobile_phone.png" class="imgmin" height=100 widht=100> </img>
+               </div>
+               <div class="indvimg">
+                   <img src="https://images.all-free-download.com/images/graphiclarge/cottage_door_and_window_199195.jpg" class="imgmin" height=100 widht=100> </img>
+               </div>
+               <div class="indvimg">
+                   <img src="https://images.all-free-download.com/images/graphiclarge/nice_cottage_194242.jpg" class="imgmin" height=100 widht=100> </img>
+               </div>
+                <div class="indvimg">
+                   <img src="https://upload.wikimedia.org/wikipedia/commons/b/b6/Image_created_with_a_mobile_phone.png" class="imgmin" height=100 widht=100> </img>
+               </div>
+           </div>
+           </div>
+       </div>
+       
+   <div>
+   
+   </body>
+   <div id="zoomed"></div>
+</html>
+<script>
+$(document).ready(function() {
+
+
+$(".imgmin").on("click", function(e){
+    console.log(e)
+    //$("#focused").attr("width", 500);
+    //$("#focused").attr("height", 500);   
+    $("#zoomed").attr("src", e.target.src)    
+});
+
+});    
+</script>

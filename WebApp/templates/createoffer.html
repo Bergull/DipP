@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<head>
+<script src="https://code.jquery.com/jquery-3.5.0.min.js"
+		integrity="sha256-xNzN2a4ltkB44Mc/Jz3pT4iU1cmeR0FkXs4pru/JxaQ="
+		crossorigin="anonymous">
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" >
+
+</head>
+
+<html>
+   <body>
+   <nav class="row navbar navbar-light navbar-expand-lg bg-light">
+          <ul class="navbar-nav mr-auto">
+            <li><a href="{{ url_for('createoffer') }}" class="nav-link">Nový inzerát</a></li>
+            <li><a href="{{ url_for('listings') }}" class="nav-link">Dostupné inzeráty</a></li>
+          </ul>
+    </nav>
+   <div id="container" class="row">
+       <div id="left" class="col testbgr padding20">
+          <h1>Nahrát inzerát</h1>
+           <form id="offerform">
+               <label for="name">Lokace</label><br>
+               <input type="text" name="name"/><br>
+               <label for="fname">Plocha</label><br>
+               <input type="text"/><br>
+               <label for="address">Adresa</label><br>
+               <input type="text" name="address"/><br>
+               <label for="fname">Popis</label><br>
+               <input type="text"/><br>
+               <label for="fname">Cena</label><br>
+               <input type="text"/><br>
+               <p>Nahrát obrázky</p>
+               <input type="file" id = "fileupload" accept="image/*"/>
+               <div id="uploadctnr">
+                   <button id = "previewbtn">Preview - assistant</button>
+               </div>
+               <input type="submit" value="Odeslat inzerát"/>
+           </form>
+       </div>
+    
+       <div id="rightcol" class="col padding20">
+           <div id="mainimg" class="padding20">
+               <img src="https://upload.wikimedia.org/wikipedia/commons/b/b6/Image_created_with_a_mobile_phone.png" id="zoomed" height=500 widht=500> </img>
+           </div>
+            <div class="recommendations">
+                <h3>Doporučení</h3>
+                
+            </div>
+           <div id="otherimgcont">
+            <div id="output">Output imgs</div>
+           </div>
+       </div>
+       
+   <div>
+   
+   </body>
+   <div id="zoomed"></div>
+</html>
+<script>
+$(document).ready(function() {
+
+imageDict = {}
+imageList = []
+$("#fileupload").on("change", function(e){
+    //ziskat filename
+    let filename = e.target.files[0].name.split(".")[0];
+    
+    //pridat file do dict s klicem filename
+    imageDict[filename] = e.target.files[0]
+    
+    //pridat soubor obrazku do listu obrazku
+    imageList.push(e.target.files[0])
+    
+    //create img obj pro preview a nastavit url
+    let imgPreview = new Image(300, 300);
+    
+    imgPreview.src = URL.createObjectURL(e.target.files[0]);
+    $(imgPreview).attr("class", "imgmin");
+    //vytvorit kontejner s buttonem co odstrani preview img z imglistu a z html
+    let imgPreviewContainer = $("<div></div>").attr("id", filename);
+    let rmvBtn = $("<button>Odstranit</button>").attr("class", filename);
+    rmvBtn.on("click", function(e){
+        $("#" + e.target.className).remove();
+        delete imageDict[e.target.className];
+    }) ;
+    
+    imgPreviewContainer.append(rmvBtn);
+    imgPreviewContainer.append(imgPreview);
+    $("#output").append(imgPreviewContainer);
+})
+
+//pro nahrani inzeratu pouzit ajax upload pro nahrani vsech souboru z imglistu a potom pri successu redirect pres window location
+$("#offerform").submit(function(e){
+    e.preventDefault()
+    var form = $("#offerform")[0]
+    let formData = new FormData(form);
+    
+      
+    for(file in imageDict){
+        formData.append(file, imageDict[file])
+    }
+    
+    $.ajax({
+     url: '/postoffer/',
+     type: 'post',
+     data: formData,
+     processData: false,
+     contentType: false,
+     success : function(response){
+     console.log(response);
+     console.log(response.redirect);
+     if(response.redirect){
+         window.location.replace("/offer/" + response.redirect);
+     }
+     }
+     });
+});
+
+$("#previewbtn").click(function(e){
+    e.preventDefault();
+    var fd = new FormData();
+    for(file in imageDict){
+        fd.append(file, imageDict[file])
+    }
+    $.ajax({
+        url: '/receive/',
+        type: 'post',
+        data: fd,
+        processData: false,
+        contentType: false,
+        success: function(response){
+            if(response != 0){
+                console.log(response)
+                pclassArr = []
+                for(pclass in response.predClasses){
+                    console.log("pclass" + pclass)
+                    console.log( $("#" + pclass))
+                    //$("#" + pclass).children("div").eq(0).text(response.predClasses[pclass])
+                    $("#" + pclass).append("<div>" + response.predClasses[pclass] +  "</div>")
+                    if (typeof(response.predClasses[pclass][0]) !== "undefined"){
+                        pclassArr.push(response.predClasses[pclass][0]);
+                    }
+                }
+                console.log(pclassArr);
+                presentCategories = Array.from(new Set(pclassArr));
+                console.log(presentCategories);
+                
+                /*switch(presentCategories){
+                    case "bedroom" : console.log("bed");
+                    case "kitchen" : console.log("kit");
+                    case "bathroom" : console.log("bath");
+                }*/
+                //check kdyz neni zadnej obrazek v urcity tride a zaroven neni vypsana hlaska
+                if(!presentCategories.includes("kitchen") && !($(".nokitchen")[0])){
+                    console.log("NO KITCHEN");
+                    recom = $("<p>Zvažte nahrání obrázku kuchyně...</p>").attr("class", "recommendation nokitchen")
+                    recom.appendTo($(".recommendations"))
+                }
+                if(!presentCategories.includes("bathroom") && !($(".nobathroom")[0])){
+                    console.log("NO BATHROOM");
+                    recom = $("<p>Zvažte nahrání obrázku koupelny...</p>").attr("class", "recommendation nobathroom")
+                    recom.appendTo($(".recommendations"))
+                }
+                if(!presentCategories.includes("plan") && !($(".noplan")[0])){
+                    console.log("NO PLAN");
+                    recom = $("<p>Zvažte nahrání obrázku půdorysu...</p>").attr("class", "recommendation noplan")
+                    recom.appendTo($(".recommendations"))
+                }
+                presentCategories.forEach(function(presentcat){
+                console.log(presentcat)
+                    if($(".no" + presentcat)[0]){
+                        $(".no" + presentcat).remove()   
+                    }
+                })
+            }else{
+                alert('file not uploaded');
+            }
+        },
+        error: function (response) {
+            console.log(response)
+        }
+    });
+});
+
+
+$("#output").on("click", ".imgmin" ,function(e){
+    console.log(e);
+    //$("#focused").attr("width", 500);
+    //$("#focused").attr("height", 500);   
+    $("#zoomed").attr("src", e.target.src)    
+});
+ 
+
+});  //end document ready   
+</script>

@@ -1,0 +1,15 @@
+<html>
+   <body>
+   <p>predicted class: </p>
+   <p>{{ predicted_class }}</p>
+   <br>
+   <p>probability</p>
+   <p></p>
+    {% set index = 0 %}
+    {% for pred in predicted_probs[0]%}
+      <p>{{ cnames[loop.index - 1 ]  }} </p>
+      <p>{{  '{:.20f}'.format(pred) }}</p>
+    {% endfor %}
+    {{ cnames }}
+   </body>
+</html>

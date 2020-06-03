@@ -1,0 +1,57 @@
+#container{
+        margin : auto;
+        background-color : #eee6ff;
+        width : 80%
+}
+.leftfloat{
+    float : left;
+}
+.testbgr{
+    background-color : #e6ffff;
+}
+.padding20{
+    padding : 20px
+}
+#mainimg{
+}
+#otherimgcontXXX{
+    display : flex;
+    flex-wrap: wrap;
+}
+.indvimgXXX{
+    float : left;
+    margin : 20px;
+}
+.imgmin{
+    max-height : 90%;
+    max-width : 90%;
+    height = auto;
+    width = auto;
+    
+}
+#rightcol{
+    width : 600px;
+}
+#zoomed{
+    max-width : 50%;
+    max-height : 50%;
+    width : auto;
+    height : auto;
+}
+.thumbnailcont{
+    overflow:hidden;
+}
+.greyedout{
+    opacity: 0.4;
+    filter: alpha(opacity=40); 
+}
+#uploadctnr{
+    margin-top: 10px;
+    margin-bottom : 10px;
+}
+.thumbnail{
+    max-width: 5%;
+    max-height : 5%;
+}
+.offercontainer{
+}
